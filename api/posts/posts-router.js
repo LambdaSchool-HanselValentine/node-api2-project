@@ -54,8 +54,9 @@ router.post("/", (req, res) => {
 		});
 	} else {
 		Post.insert(postData)
-			.then((post) => {
-				res.status(201).send(post);
+			.then((postId) => {
+				//the return of the then() is an ID so tests are failing:
+				res.status(201).send(postId);
 			})
 			.catch(() => {
 				res.status(500).json({
@@ -92,8 +93,44 @@ router.put("/:id", (req, res) => {
 });
 
 // DELETE - Removes the post with the specified id and returns the deleted post object
+router.delete("/:id", (req, res) => {
+	const { id } = req.params;
+
+	Post.remove(id)
+		.then((post) => {
+			post
+				? res.status(200).send(post)
+				: res.status(404).json({
+						message: "The post with the specified ID does not exist",
+				  });
+		})
+		.catch(() => {
+			res.status(500).json({ message: "The post could not be removed" });
+		});
+});
 
 // GET - Returns an array of all the comment objects associated with the post with the specified id
+router.get("/:id/comments", (req, res) => {
+	const { id } = req.params;
+
+	Post.findPostComments(id)
+		.then((comment) => {
+			comment
+				? res.status(200).json(comment)
+				: res.status(404).json({
+						message: "The post with the specified ID does not exist",
+				  });
+		})
+		.catch(() => {
+			res
+				.status(500)
+				.json({ message: "The comments information could not be retrieved" });
+		});
+});
+
+// GET - specific comment
+router.get("/:id/comments/:id");
+// ? how do we defined 2 IDs ???
 
 // don't forget to export!
 module.exports = router;
