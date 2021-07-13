@@ -55,7 +55,7 @@ router.post("/", (req, res) => {
 	} else {
 		Post.insert(postData)
 			.then((postId) => {
-				//the return of the then() is an ID so tests are failing:
+				//the return of the then() is an ID so tests are failing.
 				res.status(201).send(postId);
 			})
 			.catch(() => {
